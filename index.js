@@ -16,7 +16,9 @@
 
 'use strict';
 
-const functions = require('firebase-functions');
+//const functions = require('firebase-functions');
+const express = require('express');
+const bodyParser = require('body-parser')
 const { WebhookClient } = require('dialogflow-fulfillment');
 const { Card, Suggestion } = require('dialogflow-fulfillment');
 const { Carousel } = require('actions-on-google');
@@ -28,7 +30,11 @@ const imageUrl = 'https://developers.google.com/actions/images/badges/XPM_BADGIN
 const imageUrl2 = 'https://lh3.googleusercontent.com/Nu3a6F80WfixUqf_ec_vgXy_c0-0r4VLJRXjVFF_X_CIilEu8B9fT35qyTEj_PEsKw';
 const linkUrl = 'https://assistant.google.com/';
 
-exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, response) => {
+var app = express();
+app.use(bodyParser.json());
+app.set('port', (process.env.PORT || 5000));
+
+app.get('/webhook',function(request, response) {
   const agent = new WebhookClient({ request, response });
   console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
   console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
@@ -98,4 +104,7 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
     intentMap.set(null, other);
   }
   agent.handleRequest(intentMap);
+});
+app.listen(app.get('port'), function () {
+  console.log('* Webhook service is listening on port:' + app.get('port'))
 });

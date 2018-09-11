@@ -38,7 +38,7 @@ app.post('/webhook',function(request, response) {
   const agent = new WebhookClient({ request, response });
   console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
   console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
-
+//Google Assistant일 경우 Carousel로
   function googleAssistantOther(agent) {
     let conv = agent.conv(); // Get Actions on Google library conversation object
     conv.ask('Please choose an item:'); // Use Actions on Google library to add responses
@@ -66,16 +66,7 @@ app.post('/webhook',function(request, response) {
     // Add Actions on Google library responses to your agent's response
     agent.add(conv);
   }
-
-  function welcome(agent) {
-    agent.add(`Welcome to my agent!`);
-  }
-
-  function fallback(agent) {
-    agent.add(`I didn't understand`);
-    agent.add(`I'm sorry, can you try again?`);
-  }
-
+  //Google Assistant가 아닐 경우 그냥 카드로.
   function other(agent) {
     agent.add(`This message is from Dialogflow's Cloud Functions for Firebase editor!`);
     agent.add(new Card({
@@ -91,10 +82,31 @@ app.post('/webhook',function(request, response) {
     agent.setContext({ name: 'weather', lifespan: 2, parameters: { city: 'Rome' }});
   }
 
+  function welcome(agent) {
+    agent.add(`Welcome to my agent!`);
+  }
+
+  function fallback(agent) {
+    agent.add(`I didn't understand`);
+    agent.add(`I'm sorry, can you try again?`);
+  }
+   //10.국가별 매출 현황 Sales By Country
+   function salesByCountry(agent){
+     //10.1 파라미터
+     let sCountry = agent.parameters.Country;
+     let sPeriod  = agent.parameters.Period;
+     agent.add(sCountry+`의 `+sPeriod+`기준 매출은 100만원입니다.`)
+     agent.add(new Suggestion('저번달은 어때?'));
+   }
+
+
+
+
   // Run the proper handler based on the matched Dialogflow intent
   let intentMap = new Map();
   intentMap.set('Default Welcome Intent', welcome);
   intentMap.set('Default Fallback Intent', fallback);
+  intentMap.set('Sales By Country', salesByCountry);
   // if requests for intents other than the default welcome and default fallback
   // is from the Google Assistant use the `googleAssistantOther` function
   // otherwise use the `other` function

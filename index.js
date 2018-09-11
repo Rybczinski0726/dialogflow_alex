@@ -95,7 +95,7 @@ app.post('/webhook',function(request, response) {
      //10.1 파라미터
      let sCountry = agent.parameters.Country;
      let sPeriod  = agent.parameters.Period;
-     agent.add(sCountry+`의 `+sPeriod+`기준 매출은 100만원입니다.`)
+     agent.add(sCountry+`의 `+sPeriod.startDateTime.substring(0,3)+`년 `+sPeriod.startDateTime.substring(5,6)+`월 기준 매출은 100만원입니다.`)
      agent.add(new Suggestion('저번달은 어때?'));
    }
 

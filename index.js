@@ -33,6 +33,11 @@ app.use(express.static('static'))
 var server = app.listen(port, function () {
     console.log('node.js static, REST server and websockets listening on port: ' + port)
 })
+//{ headers: {
+//"Access-Control-Allow-Origin": "*",
+//    "Access-Control-Allow-Headers": "http://localhost:3000",
+//    "Access-Control-Allow-Methods": "PUT, GET, POST, DELETE, OPTIONS"
+//} }
 const wss = new SocketServer({ server });
 //30.Websocket용 서비스 생성
 wss.on('connection', function connection(ws) {

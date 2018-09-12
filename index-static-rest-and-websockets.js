@@ -10,7 +10,7 @@ var router = express.Router();
 var port = process.env.PORT || 80;
 
 //default/test route
-router.get('/status', function(req, res) {
+router.post('/status', function(req, res) {
     res.json({ status: 'App is running!' });
 });
 
@@ -35,8 +35,9 @@ wss.on('connection', function connection(ws) {
 
     //on connect message
     ws.on('message', function incoming(message) {
-        console.log('received: %s', message);
-        connectedUsers.push(message);
+        // console.log('received: %s', message);
+        // connectedUsers.push(message);
+        ws.send(message);
     });
 
     ws.send('something');

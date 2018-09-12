@@ -9,7 +9,7 @@
     "node": ">=6.0"
   },
   "scripts": {
-    "start": "node index-static-rest-and-websockets.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "express": "^4.15.3",

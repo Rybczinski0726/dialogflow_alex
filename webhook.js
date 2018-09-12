@@ -39,15 +39,16 @@ webhook.post('/',function(request, response) {
 
   process.stdin.resume();
   process.stdin.setEncoding('utf8');
-  wsClient.send(request);//, console.log.bind(null, 'Sent : ', JSON.stringify(responseToUser)));
-
+  wsClient.send(JSON.stringify(request.queryResult));//, console.log.bind(null, 'Sent : ', JSON.stringify(responseToUser)));
+//아래는 필요있을까?
  process.stdin.on('data', function(message) {
    message = message.trim();
+   console.log("stdin data")
    wsClient.send(message);//, console.log.bind(null, 'Sent : ', message));
  });
   //999.Websocket을 통한 request호출 END
-  console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
-  console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
+  // console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
+  // console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
 //Google Assistant일 경우 Carousel로
   function googleAssistantOther(agent) {
     let conv = agent.conv(); // Get Actions on Google library conversation object

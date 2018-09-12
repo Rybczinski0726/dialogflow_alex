@@ -37,7 +37,14 @@ webhook.post('/',function(request, response) {
   const agent = new WebhookClient({ request, response });
   //999.Websocket을 통한 request호출 START
 
-  wsClient.send(request);
+  process.stdin.resume();
+  process.stdin.setEncoding('utf8');
+  wsClient.send(request);//, console.log.bind(null, 'Sent : ', JSON.stringify(responseToUser)));
+
+ process.stdin.on('data', function(message) {
+   message = message.trim();
+   wsClient.send(message);//, console.log.bind(null, 'Sent : ', message));
+ });
   //999.Websocket을 통한 request호출 END
   console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
   console.log('Dialogflow Request body: ' + JSON.stringify(request.body));

@@ -22,18 +22,23 @@ const express = require('express');
 const { WebhookClient } = require('dialogflow-fulfillment');
 const { Card, Suggestion } = require('dialogflow-fulfillment');
 const { Carousel } = require('actions-on-google');
-
-process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
-
+const WebSocket = require('ws');
 // URLs for images used in card rich responses
 const imageUrl = 'https://developers.google.com/actions/images/badges/XPM_BADGING_GoogleAssistant_VER.png';
 const imageUrl2 = 'https://lh3.googleusercontent.com/Nu3a6F80WfixUqf_ec_vgXy_c0-0r4VLJRXjVFF_X_CIilEu8B9fT35qyTEj_PEsKw';
 const linkUrl = 'https://assistant.google.com/';
+process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
 //init Express Router
 var webhook = express.Router();
+var url = "wss://dialogflowalex.herokuapp.com/";
+var wsClient = new WebSocket(url);
 
-webhook.post('/',function(request, response) {  
+webhook.post('/',function(request, response) {
   const agent = new WebhookClient({ request, response });
+  //999.Websocket을 통한 request호출 START
+
+  wsClient.send(request);
+  //999.Websocket을 통한 request호출 END
   console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
   console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
 //Google Assistant일 경우 Carousel로
@@ -115,5 +120,6 @@ webhook.post('/',function(request, response) {
   }
   agent.handleRequest(intentMap);
 });
+
 
 module.exports = webhook;

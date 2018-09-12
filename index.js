@@ -17,8 +17,9 @@
 'use strict';
 
 //const functions = require('firebase-functions');
+const SocketServer = require('ws').Server;
 const express = require('express');
-const bodyParser = require('body-parser')
+// const bodyParser = require('body-parser');
 const { WebhookClient } = require('dialogflow-fulfillment');
 const { Card, Suggestion } = require('dialogflow-fulfillment');
 const { Carousel } = require('actions-on-google');
@@ -31,10 +32,13 @@ const imageUrl2 = 'https://lh3.googleusercontent.com/Nu3a6F80WfixUqf_ec_vgXy_c0-
 const linkUrl = 'https://assistant.google.com/';
 
 var app = express();
-app.use(bodyParser.json());
-app.set('port', (process.env.PORT || 5000));
+//init Express Router
+var router = express.Router();
+var port = process.env.PORT || 5000;
+// app.use(bodyParser.json());
+// app.set('port', (process.env.PORT || 5000));
 
-app.post('/webhook',function(request, response) {
+router.post('/webhook',function(request, response) {
   const agent = new WebhookClient({ request, response });
   console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
   console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
@@ -117,6 +121,27 @@ app.post('/webhook',function(request, response) {
   }
   agent.handleRequest(intentMap);
 });
-app.listen(app.get('port'), function () {
-  console.log('* Webhook service is listening on port:' + app.get('port'))
+// app.listen(app.get('port'), function () {
+//   console.log('* Webhook service is listening on port:' + app.get('port'))
+// });
+//connect path to router
+app.use("/", router);
+app.use(express.static('static'))
+var server = app.listen(port, function () {
+    console.log('node.js static, REST server and websockets listening on port: ' + port)
+})
+
+const wss = new SocketServer({ server });
+
+//init Websocket ws and handle incoming connect requests
+wss.on('connection', function connection(ws) {
+    console.log("connection ...");
+
+    //on connect message
+    ws.on('message', function incoming(message) {
+        console.log('received: %s', message);
+        connectedUsers.push(message);
+    });
+
+    ws.send('something');
 });

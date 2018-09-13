@@ -38,7 +38,7 @@ var server = app.listen(port, function () {
 //    "Access-Control-Allow-Headers": "http://localhost:3000",
 //    "Access-Control-Allow-Methods": "PUT, GET, POST, DELETE, OPTIONS"
 //} }
-const wss = new SocketServer({ server });
+const wss = new SocketServer({  server });
 //30.Websocket용 서비스 생성
 wss.on('connection', function connection(ws) {
     ws.on('message', function incoming(message) {

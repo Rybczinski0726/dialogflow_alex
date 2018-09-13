@@ -30,11 +30,20 @@ const linkUrl = 'https://assistant.google.com/';
 process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
 //init Express Router
 var webhook = express.Router();
-// var url = "wss://dialogflowalex.herokuapp.com/";
+// var url = "wss://s0003918939trial-trial-dev-ui5websocket.cfapps.eu10.hana.ondemand.com";
+var url = "wss://dialogflowalex.herokuapp.com/";
 // var wsClient = new WebSocket(url);
 
 webhook.post('/',function(request, response) {
   const agent = new WebhookClient({ request, response });
+
+//WebSocket호출
+var ws = new WebSocket(url);
+ws.onopen = function () {
+       // console.log('websocket is connected ...')
+        // sendResponseToWebsocket(responseJson);
+        ws.send(JSON.stringify(response.fulfillmentMessages));
+   }
   //999.Websocket을 통한 request호출 START
 
 //   process.stdin.resume();

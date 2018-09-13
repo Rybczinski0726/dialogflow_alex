@@ -18,6 +18,7 @@
 
 //const functions = require('firebase-functions');
 const SocketServer = require('ws').Server;
+const WebSocket = require('ws');
 const express = require('express');
 const webhook = require('./webhook');
 const bodyParser = require('body-parser');
@@ -39,10 +40,24 @@ var server = app.listen(port, function () {
 //    "Access-Control-Allow-Methods": "PUT, GET, POST, DELETE, OPTIONS"
 //} }
 const wss = new SocketServer({  server });
+//전체 clients
+wss.broadcast = function broadcast(data) {
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(data);
+    }
+  });
+};
+
 //30.Websocket용 서비스 생성
 wss.on('connection', function connection(ws) {
-    ws.on('message', function incoming(message) {
-        ws.send(message);
+    ws.on('message', function incoming(data) {
+      // Broadcast to everyone else.
+       wss.clients.forEach(function each(client) {
+         if (client !== ws && client.readyState === WebSocket.OPEN) {
+           client.send(data);
+         }
+       });
     });
     ws.send('Connection established!!');
 });

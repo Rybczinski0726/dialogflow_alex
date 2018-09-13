@@ -30,22 +30,22 @@ const linkUrl = 'https://assistant.google.com/';
 process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
 //init Express Router
 var webhook = express.Router();
-var url = "wss://dialogflowalex.herokuapp.com/";
-var wsClient = new WebSocket(url);
+// var url = "wss://dialogflowalex.herokuapp.com/";
+// var wsClient = new WebSocket(url);
 
 webhook.post('/',function(request, response) {
   const agent = new WebhookClient({ request, response });
   //999.Websocket을 통한 request호출 START
 
-  process.stdin.resume();
-  process.stdin.setEncoding('utf8');
-  wsClient.send(JSON.stringify(request.queryResult));//, console.log.bind(null, 'Sent : ', JSON.stringify(responseToUser)));
-//아래는 필요있을까?
- process.stdin.on('data', function(message) {
-   message = message.trim();
-   console.log("stdin data")
-   wsClient.send(message);//, console.log.bind(null, 'Sent : ', message));
- });
+//   process.stdin.resume();
+//   process.stdin.setEncoding('utf8');
+//   wsClient.send(JSON.stringify(request.queryResult));//, console.log.bind(null, 'Sent : ', JSON.stringify(responseToUser)));
+// //아래는 필요있을까?
+//  process.stdin.on('data', function(message) {
+//    message = message.trim();
+//    console.log("stdin data")
+//    wsClient.send(message);//, console.log.bind(null, 'Sent : ', message));
+//  });
   //999.Websocket을 통한 request호출 END
   // console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
   // console.log('Dialogflow Request body: ' + JSON.stringify(request.body));

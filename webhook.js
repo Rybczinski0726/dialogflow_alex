@@ -27,6 +27,7 @@ const WebSocket = require('ws');
 const imageUrl = 'https://developers.google.com/actions/images/badges/XPM_BADGING_GoogleAssistant_VER.png';
 const imageUrl2 = 'https://lh3.googleusercontent.com/Nu3a6F80WfixUqf_ec_vgXy_c0-0r4VLJRXjVFF_X_CIilEu8B9fT35qyTEj_PEsKw';
 const linkUrl = 'https://assistant.google.com/';
+
 process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
 //init Express Router
 var webhook = express.Router();
@@ -118,15 +119,41 @@ ws.onopen = function () {
      agent.add(sCountry+`의 `+sPeriod.startDateTime.split('-')[0]+`년 `+sPeriod.startDateTime.split('-')[1]+`월 기준 매출은 100만원입니다.`)
      agent.add(new Suggestion('저번달은 어때?'));
    }
-
-
-
-
+   //20. 제품 조회 Query Product
+   function queryProduct(agent){
+     let sProduct = agent.parameters.Product;
+     agent.add(sProduct+`에 대한 정보입니다`);
+     switch (sProduct) {
+       case `리지드`:
+           agent.add(new Card({
+               title: `제품 상세 정보`,
+               imageUrl: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB9aBdgJwyYikgxaLQwjT6BrhUvyFZUbsFl8beN4TCtril9Wcn`,
+               text: `자체발광으로 최고의 화질을 구현하는 디스플레이 OLED. OLED는 뛰어난 화질과 얇은 두께, 그리고 가벼운 무게로 모바일 디스플레이의 주류로 자리잡음`,
+               buttonText: '더 보기',
+               buttonUrl: `http://news.samsungdisplay.com/11544`
+             })
+           );
+           agent.add(new Suggestion(`플렉서블 OLED는 뭐야`));
+           case `플렉서블 OLED`:
+           agent.add(new Card({
+               title: `제품 상세 정보`,
+               imageUrl: `http://www.ddaily.co.kr/data/photos/cdn/20171041/art_1507683592.jpg`,
+               text: `말 그대로 부드럽게 휘어지고 자유롭게 구부릴 수 있는 형태의 디스플레이를 말합니다. 디스플레이가 깨지거나 부러지지 않고 휘어질 수 있는 이유는..`,
+               buttonText: '더 보기',
+               buttonUrl: `https://en.wikipedia.org/wiki/Flexible_organic_light-emitting_diode`
+             })
+           );
+           agent.add(new Suggestion(`리지드 OLED는 뭐야`));
+         break;
+       default:
+     }
+   }
   // Run the proper handler based on the matched Dialogflow intent
   let intentMap = new Map();
   intentMap.set('Default Welcome Intent', welcome);
   intentMap.set('Default Fallback Intent', fallback);
   intentMap.set('Sales By Country', salesByCountry);
+  intentMap.set('Query Product', queryProduct);
   // if requests for intents other than the default welcome and default fallback
   // is from the Google Assistant use the `googleAssistantOther` function
   // otherwise use the `other` function

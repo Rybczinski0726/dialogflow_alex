@@ -134,6 +134,7 @@ ws.onopen = function () {
              })
            );
            agent.add(new Suggestion(`플렉서블 OLED는 뭐야`));
+           break;
            case `플렉서블 OLED`:
            agent.add(new Card({
                title: `제품 상세 정보`,

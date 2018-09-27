@@ -45,20 +45,100 @@ ws.onopen = function () {
         // sendResponseToWebsocket(responseJson);
         ws.send(JSON.stringify(response.fulfillmentMessages));
    }
-  //999.Websocket을 통한 request호출 START
+/**
+* INTENT별 기능 정의
+*/
+//10.Viewpoint별 매출(국가, 부문, 제품) Q: 국가별 8월 기준 매출 현황 보여줘
+function SalesByViewpoint(agent){
+  //10.1 파라미터
+  let sViewpoint = agent.parameters.Viewpoint;
+  let sPeriod  = agent.parameters.Period;
+  // agent.add(sCountry+`의 `+sPeriod.startDateTime.split('-')[0]+`년 `+sPeriod.startDateTime.split('-')[1]+`월 기준 매출은 100만원입니다.`)
+  // agent.add(new Suggestion('저번달은 어때?'));
+}
+//10.100 Sales By Viewpoint - AddDivision Q:미국 매출 실적을 부문별로 보여줘
+function SalesByViewpointAddDivision(agent){
 
-//   process.stdin.resume();
-//   process.stdin.setEncoding('utf8');
-//   wsClient.send(JSON.stringify(request.queryResult));//, console.log.bind(null, 'Sent : ', JSON.stringify(responseToUser)));
-// //아래는 필요있을까?
-//  process.stdin.on('data', function(message) {
-//    message = message.trim();
-//    console.log("stdin data")
-//    wsClient.send(message);//, console.log.bind(null, 'Sent : ', message));
-//  });
-  //999.Websocket을 통한 request호출 END
-  // console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
-  // console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
+}
+//10.100.10 Sales By Viewpoint - AddDivision - Drilldown Q:DP부문의 영업이익이 왜 저렇게 낮지?
+function SalesByViewpointAddDivisionDrilldown(agent){
+
+}
+//10.200 Sales By Viewpoint - smallTalk-ExchangeRate Q:오늘 환율 기준으로 100달러가 원화로 얼마야?
+function SalesByViewpointsmallTalkExchangeRate(agent){
+
+}
+//10.300 Sales By Viewpoint - SendEmail Q:작년 실적을 포함한 상세 정보를 내 메일로 전송해줘
+function SalesByViewpointSendEmail(agent){
+
+}
+//10.400 Sales By Viewpoint - ChangePeriod Q:저번 달은 어때?
+function SalesByViewpointChangePeriod(agent){
+
+}
+//10.500 Sales By Viewpoint - Profit Q:영업 이익은 어때?
+function SalesByViewpointProfit(agent){
+
+}
+//20. 제품 조회 Query Product Q:리지드 OLED가 뭐야?
+function QueryProduct(agent){
+  let sProduct = agent.parameters.Product;
+  agent.add(sProduct+`에 대한 정보입니다`);
+  switch (sProduct) {
+    case `리지드`:
+        agent.add(new Card({
+            title: `제품 상세 정보`,
+            imageUrl: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB9aBdgJwyYikgxaLQwjT6BrhUvyFZUbsFl8beN4TCtril9Wcn`,
+            text: `자체발광으로 최고의 화질을 구현하는 디스플레이 OLED. OLED는 뛰어난 화질과 얇은 두께, 그리고 가벼운 무게로 모바일 디스플레이의 주류로 자리잡음`,
+            buttonText: '더 보기',
+            buttonUrl: `http://news.samsungdisplay.com/11544`
+          })
+        );
+        agent.add(new Suggestion(`플렉서블 OLED는 뭐야`));
+        break;
+        case `플렉서블 OLED`:
+        agent.add(new Card({
+            title: `제품 상세 정보`,
+            imageUrl: `http://www.ddaily.co.kr/data/photos/cdn/20171041/art_1507683592.jpg`,
+            text: `말 그대로 부드럽게 휘어지고 자유롭게 구부릴 수 있는 형태의 디스플레이를 말합니다. 디스플레이가 깨지거나 부러지지 않고 휘어질 수 있는 이유는..`,
+            buttonText: '더 보기',
+            buttonUrl: `https://en.wikipedia.org/wiki/Flexible_organic_light-emitting_diode`
+          })
+        );
+        agent.add(new Suggestion(`리지드 OLED는 뭐야`));
+      break;
+    default:
+  }
+}
+//30.  Query Employee Q:김과장 연락처 좀 검색해줘
+function QueryEmployee(agent){
+
+}
+//40.   Query Local Area Q:아 그리고 오늘 회의 끝나고 수원에서 회식할 건데 예전에 갔을 때 별로 던데 최근에 괜찮은 식당 같은게 생겼나?
+function QueryLocalArea(agent){
+
+}
+//50.    Call RPA Q:참 이번에 A社랑 계약금이 입금됐는지 확인해줘
+function CallRPA (agent){
+
+}
+//50.100    Call RPA - yes Q:그래
+function CallRPAyes (agent){
+
+}
+//50.100    Call RPA - no Q:아니
+function CallRPAno (agent){
+
+}
+//60. Help Q:현재 화면에 대해 설명해줘
+function Help(agent){
+
+}
+//70. Summarize finance
+function  Summarizefinance(agent){
+
+}
+
 //Google Assistant일 경우 Carousel로
   function googleAssistantOther(agent) {
     let conv = agent.conv(); // Get Actions on Google library conversation object
@@ -111,50 +191,30 @@ ws.onopen = function () {
     agent.add(`I didn't understand`);
     agent.add(`I'm sorry, can you try again?`);
   }
-   //10.국가별 매출 현황 Sales By Country
-   function salesByCountry(agent){
-     //10.1 파라미터
-     let sCountry = agent.parameters.Country;
-     let sPeriod  = agent.parameters.Period;
-     agent.add(sCountry+`의 `+sPeriod.startDateTime.split('-')[0]+`년 `+sPeriod.startDateTime.split('-')[1]+`월 기준 매출은 100만원입니다.`)
-     agent.add(new Suggestion('저번달은 어때?'));
-   }
-   //20. 제품 조회 Query Product
-   function queryProduct(agent){
-     let sProduct = agent.parameters.Product;
-     agent.add(sProduct+`에 대한 정보입니다`);
-     switch (sProduct) {
-       case `리지드`:
-           agent.add(new Card({
-               title: `제품 상세 정보`,
-               imageUrl: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB9aBdgJwyYikgxaLQwjT6BrhUvyFZUbsFl8beN4TCtril9Wcn`,
-               text: `자체발광으로 최고의 화질을 구현하는 디스플레이 OLED. OLED는 뛰어난 화질과 얇은 두께, 그리고 가벼운 무게로 모바일 디스플레이의 주류로 자리잡음`,
-               buttonText: '더 보기',
-               buttonUrl: `http://news.samsungdisplay.com/11544`
-             })
-           );
-           agent.add(new Suggestion(`플렉서블 OLED는 뭐야`));
-           break;
-           case `플렉서블 OLED`:
-           agent.add(new Card({
-               title: `제품 상세 정보`,
-               imageUrl: `http://www.ddaily.co.kr/data/photos/cdn/20171041/art_1507683592.jpg`,
-               text: `말 그대로 부드럽게 휘어지고 자유롭게 구부릴 수 있는 형태의 디스플레이를 말합니다. 디스플레이가 깨지거나 부러지지 않고 휘어질 수 있는 이유는..`,
-               buttonText: '더 보기',
-               buttonUrl: `https://en.wikipedia.org/wiki/Flexible_organic_light-emitting_diode`
-             })
-           );
-           agent.add(new Suggestion(`리지드 OLED는 뭐야`));
-         break;
-       default:
-     }
-   }
+
+
   // Run the proper handler based on the matched Dialogflow intent
   let intentMap = new Map();
   intentMap.set('Default Welcome Intent', welcome);
   intentMap.set('Default Fallback Intent', fallback);
-  intentMap.set('Sales By Country', salesByCountry);
-  intentMap.set('Query Product', queryProduct);
+  intentMap.set('Sales By Viewpoint', SalesByViewpoint);
+  intentMap.set('Query Product', QueryProduct);
+  intentMap.set('Sales By Viewpoint', SalesByViewpoint);
+  intentMap.set('Sales By Viewpoint - AddDivision', SalesByViewpointAddDivision);
+  intentMap.set('Sales By Viewpoint - AddDivision - Drilldown', SalesByViewpointAddDivisionDrilldown);
+  intentMap.set('Sales By Viewpoint - smallTalk-ExchangeRate', SalesByViewpointsmallTalkExchangeRate);
+  intentMap.set('Sales By Viewpoint - SendEmail', SalesByViewpointSendEmail);
+  intentMap.set('Sales By Viewpoint - ChangePeriod', SalesByViewpointChangePeriod);
+  intentMap.set('Sales By Viewpoint - Profit', SalesByViewpointProfit);
+  intentMap.set('Query Employee', QueryEmployee);
+  intentMap.set('Query Local Area', QueryLocalArea);
+  intentMap.set('Call RPA', CallRPA);
+  intentMap.set('Call RPA - yes', CallRPAyes);
+  intentMap.set('Call RPA - no', CallRPAno);
+  intentMap.set('Help', Help);
+  intentMap.set('Summarize finance', Summarizefinance);
+
+
   // if requests for intents other than the default welcome and default fallback
   // is from the Google Assistant use the `googleAssistantOther` function
   // otherwise use the `other` function

@@ -49,7 +49,7 @@ wss.broadcast = function broadcast(data) {
   });
 };
 
-//30.Websocket용 서비스 생성
+//10.Websocket용 서비스 생성
 wss.on('connection', function connection(ws) {
     ws.on('message', function incoming(data) {
       // Broadcast to everyone else.

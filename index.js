@@ -21,6 +21,7 @@ const SocketServer = require('ws').Server;
 const WebSocket = require('ws');
 const express = require('express');
 const webhook = require('./webhook');
+const restServiceSales = require('./restServiceSales');
 const bodyParser = require('body-parser');
 
 var port = process.env.PORT || 5000;
@@ -29,6 +30,7 @@ var app = express();
 app.use(bodyParser.json());
 //10.Webhook용 서비스 생성
 app.use('/webhook', webhook);
+app.use('/salesData', restServiceSales);
 //20.index.html호출용 서비스 생성
 app.use(express.static('static'))
 var server = app.listen(port, function () {

@@ -43,7 +43,9 @@ var ws = new WebSocket(url);
 ws.onopen = function () {
        // console.log('websocket is connected ...')
         // sendResponseToWebsocket(responseJson);
-        ws.send(JSON.stringify(response.fulfillmentMessages));
+        // ws.send(JSON.stringify(response.fulfillmentMessages));
+        console.log(request.body);
+        ws.send(JSON.stringify(request.body));
    }
 /**
 * INTENT별 기능 정의

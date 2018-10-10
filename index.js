@@ -23,10 +23,12 @@ const express = require('express');
 const webhook = require('./webhook');
 const restServiceSales = require('./restServiceSales');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 var port = process.env.PORT || 5000;
 var app = express();
 
+app.use(cors());
 app.use(bodyParser.json());
 //10.Webhook용 서비스 생성
 app.use('/webhook', webhook);

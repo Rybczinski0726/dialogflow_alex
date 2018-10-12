@@ -1,7 +1,7 @@
 ---
 applications:
 - name: dialogflowalex
-  memory: 512MB
+  memory: 1024MB
   instances: 1
   buildpack: nodejs_buildpack
   command: node index.js

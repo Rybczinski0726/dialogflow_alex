@@ -27,6 +27,8 @@ const WebSocket = require('ws');
 const imageUrl = 'https://developers.google.com/actions/images/badges/XPM_BADGING_GoogleAssistant_VER.png';
 const imageUrl2 = 'https://lh3.googleusercontent.com/Nu3a6F80WfixUqf_ec_vgXy_c0-0r4VLJRXjVFF_X_CIilEu8B9fT35qyTEj_PEsKw';
 const linkUrl = 'https://assistant.google.com/';
+const salesByCountry = require('./data/SalesByCountry.json');
+const salesByDivision = require('./data/SalesByDivision.json');
 
 process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
 //init Express Router
@@ -46,15 +48,51 @@ ws.onopen = function () {
         // ws.send(JSON.stringify(response.fulfillmentMessages));
         console.log(request.body);
         ws.send(JSON.stringify(request.body));
+        ws.close();
    }
 /**
 * INTENT별 기능 정의
 */
 //10.Viewpoint별 매출(국가, 부문, 제품) Q: 국가별 8월 기준 매출 현황 보여줘
 function SalesByViewpoint(agent){
-  //10.1 파라미터
+  //10.10 파라미터
   let sViewpoint = agent.parameters.Viewpoint;
-  let sPeriod  = agent.parameters.Period;
+  let sPeriod  = agent.parameters.Period.startDate;
+  let sDate = sPeriod.split('T')[0].split('-')[0]+sPeriod.split('T')[0].split('-')[1]+sPeriod.split('T')[0].split('-')[2];
+  let sResponse = sViewpoint+ ` 기준 ` + sDate.substr(0,4)+`년 `+sDate.substr(4,2)+`월의 매출 상위는 `;
+  let aFilteredData = [];
+  let aTopResult = [];
+  let sTopResult = '';
+
+  //10.20 sViewPoint는 국가,부문,제품으로 나뉘므로 분기처리
+  switch (sViewpoint) {
+    case '국가':
+         //날짜로 필터
+         aFilteredData = salesByCountry.filter(responseSales => responseSales.Date === sDate);
+         //상위 n개를 내림차순으로 리턴
+         aTopResult = TopNArrays(aFilteredData,true,'Sales',3);
+         sTopResult = ArrayToStringProp(aTopResult,'Country',',');//데이터, 컬럼, 분리자
+         console.log(sTopResult);
+         sResponse += sTopResult + '입니다.';
+         agent.add(sResponse);
+      break;
+    case '부문':
+        //날짜로 필터
+        aFilteredData = salesByDivision.filter(responseSales => responseSales.Date === sDate);
+        //상위 n개를 내림차순으로 리턴
+        aTopResult = TopNArrays(aFilteredData,true,'Sales',3);
+        sTopResult = ArrayToStringProp(aTopResult,'Division',',');//데이터, 컬럼, 분리자
+        console.log(sTopResult);
+        sResponse += sTopResult + '입니다.';
+        agent.add(sResponse);
+        break;
+
+    case '제품':
+
+          break;
+    default:
+
+  }
   // agent.add(sCountry+`의 `+sPeriod.startDateTime.split('-')[0]+`년 `+sPeriod.startDateTime.split('-')[1]+`월 기준 매출은 100만원입니다.`)
   // agent.add(new Suggestion('저번달은 어때?'));
 }
@@ -228,5 +266,32 @@ function  Summarizefinance(agent){
   agent.handleRequest(intentMap);
 });
 
+///common Functions
+function TopNArrays(aData,bDesc,sSortProp,iTop){
+  //aData에서 bDesc를 이용해(오름차순/내림차순)sSortProp 기준으로 정렬하여 상위 iTop개를 리턴
+  //10.정렬
+  if(bDesc){//내림차순일 경우
+    aData.sort(function(a,b){
+      return a[sSortProp]>b[sSortProp] ? -1 : a[sSortProp]<b[sSortProp]?1:0;
+    });
+  } else {
+    aData.sort(function(a,b){
+      return a[sSortProp]<b[sSortProp] ? -1 : a[sSortProp]>b[sSortProp]?1:0;
+    });
+  }
+  //20. 상위 iTop개 리턴
+  return aData.slice(0,iTop);
+};
+
+function ArrayToStringProp(aData,sProp,sSep){
+  let sResult = '';
+  // return aData[sProp].toString();
+  for(var i=0;i<aData.length;i++){
+    sResult += aData[i][sProp] + sSep;
+  }
+  //마지막 ,는 지워
+
+  return sResult;
+}
 
 module.exports = webhook;

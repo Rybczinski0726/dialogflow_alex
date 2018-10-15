@@ -34,7 +34,7 @@ process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
 //init Express Router
 var webhook = express.Router();
 // var url = "wss://s0003918939trial-trial-dev-ui5websocket.cfapps.eu10.hana.ondemand.com";
-var url = "wss://dialogflowalex.cfapps.eu10.hana.ondemand.com/";
+var url = "wss://dialogflowalex.cfapps.ap10.hana.ondemand.com/";
 // var wsClient = new WebSocket(url);
 
 webhook.post('/',function(request, response) {
@@ -46,7 +46,7 @@ ws.onopen = function () {
        // console.log('websocket is connected ...')
         // sendResponseToWebsocket(responseJson);
         // ws.send(JSON.stringify(response.fulfillmentMessages));
-        console.log(request.body);
+        // console.log(request.body);
         ws.send(JSON.stringify(request.body));
         ws.close();
    }
@@ -72,7 +72,7 @@ function SalesByViewpoint(agent){
          //상위 n개를 내림차순으로 리턴
          aTopResult = TopNArrays(aFilteredData,true,'Sales',3);
          sTopResult = ArrayToStringProp(aTopResult,'Country',',');//데이터, 컬럼, 분리자
-         console.log(sTopResult);
+         // console.log(sTopResult);
          sResponse += sTopResult + '입니다.';
          agent.add(sResponse);
       break;
@@ -82,7 +82,7 @@ function SalesByViewpoint(agent){
         //상위 n개를 내림차순으로 리턴
         aTopResult = TopNArrays(aFilteredData,true,'Sales',3);
         sTopResult = ArrayToStringProp(aTopResult,'Division',',');//데이터, 컬럼, 분리자
-        console.log(sTopResult);
+        // console.log(sTopResult);
         sResponse += sTopResult + '입니다.';
         agent.add(sResponse);
         break;
@@ -96,30 +96,44 @@ function SalesByViewpoint(agent){
   // agent.add(sCountry+`의 `+sPeriod.startDateTime.split('-')[0]+`년 `+sPeriod.startDateTime.split('-')[1]+`월 기준 매출은 100만원입니다.`)
   // agent.add(new Suggestion('저번달은 어때?'));
 }
-//10.100 Sales By Viewpoint - AddDivision Q:미국 매출 실적을 부문별로 보여줘
-function SalesByViewpointAddDivision(agent){
+//10.100 Sales By Viewpoint - Compare Q:저번 달이랑 비교해서 보여줘
+function SalesByViewpointCompare(agent){
+  let sViewpoint = agent.parameters.Viewpoint;
+  let sPeriodFrom  = agent.parameters.PeriodFrom.startDate;
+  let sPeriodTo  = agent.parameters.PeriodTo.startDate;
+  let sDateFrom = sPeriodFrom.split('T')[0].split('-')[0]+sPeriodFrom.split('T')[0].split('-')[1]+sPeriodFrom.split('T')[0].split('-')[2];
+  let sDateTo = sPeriodTo.split('T')[0].split('-')[0]+sPeriodTo.split('T')[0].split('-')[1]+sPeriodTo.split('T')[0].split('-')[2];
 
+  // let sResponse = sViewpoint+ ` 기준 ` + sDate.substr(0,4)+`년 `+sDate.substr(4,2)+`월의 매출 상위는 `;
+  let aFilteredData = [];
+  let aTopResult = [];
+  let sTopResult = '';
+  agent.add(sDateFrom+'대비 '+sDateTo+'의 데이터');
 }
-//10.100.10 Sales By Viewpoint - AddDivision - Drilldown Q:DP부문의 영업이익이 왜 저렇게 낮지?
-function SalesByViewpointAddDivisionDrilldown(agent){
-
-}
-//10.200 Sales By Viewpoint - smallTalk-ExchangeRate Q:오늘 환율 기준으로 100달러가 원화로 얼마야?
-function SalesByViewpointsmallTalkExchangeRate(agent){
-
-}
-//10.300 Sales By Viewpoint - SendEmail Q:작년 실적을 포함한 상세 정보를 내 메일로 전송해줘
-function SalesByViewpointSendEmail(agent){
-
-}
-//10.400 Sales By Viewpoint - ChangePeriod Q:저번 달은 어때?
-function SalesByViewpointChangePeriod(agent){
-
-}
-//10.500 Sales By Viewpoint - Profit Q:영업 이익은 어때?
-function SalesByViewpointProfit(agent){
-
-}
+// //10.100 Sales By Viewpoint - AddDivision Q:미국 매출 실적을 부문별로 보여줘
+// function SalesByViewpointAddDivision(agent){
+//
+// }
+// //10.100.10 Sales By Viewpoint - AddDivision - Drilldown Q:DP부문의 영업이익이 왜 저렇게 낮지?
+// function SalesByViewpointAddDivisionDrilldown(agent){
+//
+// }
+// //10.200 Sales By Viewpoint - smallTalk-ExchangeRate Q:오늘 환율 기준으로 100달러가 원화로 얼마야?
+// function SalesByViewpointsmallTalkExchangeRate(agent){
+//
+// }
+// //10.300 Sales By Viewpoint - SendEmail Q:작년 실적을 포함한 상세 정보를 내 메일로 전송해줘
+// function SalesByViewpointSendEmail(agent){
+//
+// }
+// //10.400 Sales By Viewpoint - ChangePeriod Q:저번 달은 어때?
+// function SalesByViewpointChangePeriod(agent){
+//
+// }
+// //10.500 Sales By Viewpoint - Profit Q:영업 이익은 어때?
+// function SalesByViewpointProfit(agent){
+//
+// }
 //20. 제품 조회 Query Product Q:리지드 OLED가 뭐야?
 function QueryProduct(agent){
   let sProduct = agent.parameters.Product;
@@ -177,6 +191,22 @@ function Help(agent){
 //70. Summarize finance
 function  Summarizefinance(agent){
 
+}
+//80. Sales By Country   Q:미국의 올해 매출 현황 알려줘
+function SalesByCountry(agent){
+  let sCountry = agent.parameters.Country;
+  let sYearRaw  = agent.parameters.Year.startDate;
+  let sYear = sYearRaw.substr(0,4);
+  // console.log(sCountry);
+  // console.log(sYear);
+  agent.add(sCountry+'의 '+sYear+'년도 매출 현황입니다.');
+}
+//90. Sales By Division   Q:미국의 올해 매출 현황 알려줘
+function SalesByDivision(agent){
+  let sDivision = agent.parameters.Division;
+  let sYearRaw  = agent.parameters.Year.startDate;
+  let sYear = sYearRaw.substr(0,4);
+  agent.add(sDivision+'의 '+sYear+'년도 매출 현황입니다.');
 }
 
 //Google Assistant일 경우 Carousel로
@@ -240,12 +270,14 @@ function  Summarizefinance(agent){
   intentMap.set('Sales By Viewpoint', SalesByViewpoint);
   intentMap.set('Query Product', QueryProduct);
   intentMap.set('Sales By Viewpoint', SalesByViewpoint);
-  intentMap.set('Sales By Viewpoint - AddDivision', SalesByViewpointAddDivision);
-  intentMap.set('Sales By Viewpoint - AddDivision - Drilldown', SalesByViewpointAddDivisionDrilldown);
-  intentMap.set('Sales By Viewpoint - smallTalk-ExchangeRate', SalesByViewpointsmallTalkExchangeRate);
-  intentMap.set('Sales By Viewpoint - SendEmail', SalesByViewpointSendEmail);
-  intentMap.set('Sales By Viewpoint - ChangePeriod', SalesByViewpointChangePeriod);
-  intentMap.set('Sales By Viewpoint - Profit', SalesByViewpointProfit);
+  intentMap.set('Sales By Viewpoint - ChangeDate', SalesByViewpoint);
+  intentMap.set('Sales By Viewpoint - Compare', SalesByViewpointCompare);
+  // intentMap.set('Sales By Viewpoint - AddDivision', SalesByViewpointAddDivision);
+  // intentMap.set('Sales By Viewpoint - AddDivision - Drilldown', SalesByViewpointAddDivisionDrilldown);
+  // intentMap.set('Sales By Viewpoint - smallTalk-ExchangeRate', SalesByViewpointsmallTalkExchangeRate);
+  // intentMap.set('Sales By Viewpoint - SendEmail', SalesByViewpointSendEmail);
+  // intentMap.set('Sales By Viewpoint - ChangePeriod', SalesByViewpointChangePeriod);
+  // intentMap.set('Sales By Viewpoint - Profit', SalesByViewpointProfit);
   intentMap.set('Query Employee', QueryEmployee);
   intentMap.set('Query Local Area', QueryLocalArea);
   intentMap.set('Call RPA', CallRPA);
@@ -253,6 +285,8 @@ function  Summarizefinance(agent){
   intentMap.set('Call RPA - no', CallRPAno);
   intentMap.set('Help', Help);
   intentMap.set('Summarize finance', Summarizefinance);
+  intentMap.set('Sales By Country', SalesByCountry);
+  intentMap.set('Sales By Division', SalesByDivision);//Sales By Viewpoint - ChangeDate
 
 
   // if requests for intents other than the default welcome and default fallback

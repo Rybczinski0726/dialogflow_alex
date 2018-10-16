@@ -110,30 +110,7 @@ function SalesByViewpointCompare(agent){
   let sTopResult = '';
   agent.add(sDateFrom+'대비 '+sDateTo+'의 데이터');
 }
-// //10.100 Sales By Viewpoint - AddDivision Q:미국 매출 실적을 부문별로 보여줘
-// function SalesByViewpointAddDivision(agent){
-//
-// }
-// //10.100.10 Sales By Viewpoint - AddDivision - Drilldown Q:DP부문의 영업이익이 왜 저렇게 낮지?
-// function SalesByViewpointAddDivisionDrilldown(agent){
-//
-// }
-// //10.200 Sales By Viewpoint - smallTalk-ExchangeRate Q:오늘 환율 기준으로 100달러가 원화로 얼마야?
-// function SalesByViewpointsmallTalkExchangeRate(agent){
-//
-// }
-// //10.300 Sales By Viewpoint - SendEmail Q:작년 실적을 포함한 상세 정보를 내 메일로 전송해줘
-// function SalesByViewpointSendEmail(agent){
-//
-// }
-// //10.400 Sales By Viewpoint - ChangePeriod Q:저번 달은 어때?
-// function SalesByViewpointChangePeriod(agent){
-//
-// }
-// //10.500 Sales By Viewpoint - Profit Q:영업 이익은 어때?
-// function SalesByViewpointProfit(agent){
-//
-// }
+
 //20. 제품 조회 Query Product Q:리지드 OLED가 뭐야?
 function QueryProduct(agent){
   let sProduct = agent.parameters.Product;
@@ -166,10 +143,19 @@ function QueryProduct(agent){
 }
 //30.  Query Employee Q:김과장 연락처 좀 검색해줘
 function QueryEmployee(agent){
-
+  let sEmployeeInformation =  agent.parameters.EmployeeInformation;
+  agent.add('요청하신 '+sEmployeeInformation+' 정보를 화면으로 전송하였습니다.');
 }
 //40.   Query Local Area Q:아 그리고 오늘 회의 끝나고 수원에서 회식할 건데 예전에 갔을 때 별로 던데 최근에 괜찮은 식당 같은게 생겼나?
 function QueryLocalArea(agent){
+  // let conv = agent.conv();
+  let sAreaItem =  agent.parameters.AreaItem;
+  // conv.ask(`요청하신 `+sAreaItem+` 정보를 화면으로 전송하였습니다.`)
+  // conv.ask(`가장 평이 좋은 '한우리'로 예약을 진행할까요?`);
+  // agent.add(`요청하신 `+sAreaItem+` 정보를 화면으로 전송하였습니다.`);
+
+  // agent.add(conv);
+  agent.add(`가장 평이 좋은 '한우리'로 예약을 진행할까요?`);
 
 }
 //50.    Call RPA Q:참 이번에 A社랑 계약금이 입금됐는지 확인해줘
@@ -190,6 +176,7 @@ function Help(agent){
 }
 //70. Summarize finance
 function  Summarizefinance(agent){
+  agent.add(`이번 달은 계획 대비 매출은 5% 초과달성이 예상되며, 영업 이익은 약 9% 정도 초과달성 할 것으로 보입니다. 다만, 미국과 중국의 무역 전쟁의 영향으로 북미에서의 매출 증가율이 타 국가에 비해 저조할 것으로 보입니다. `);
 
 }
 //80. Sales By Country   Q:미국의 올해 매출 현황 알려줘
@@ -201,6 +188,16 @@ function SalesByCountry(agent){
   // console.log(sYear);
   agent.add(sCountry+'의 '+sYear+'년도 매출 현황입니다.');
 }
+//80.10 Sales By Country - AddProfit Q:영업 이익은 어때?
+function SalesByCountryAddProfit(agent){
+  let sCountry = agent.parameters.Country;
+  let sYearRaw  = agent.parameters.Year.startDate;
+  let sYear = sYearRaw.substr(0,4);
+  let sFinancialKPI = agent.parameters.FinancialKPI;
+  // console.log(sCountry);
+  // console.log(sYear);
+  agent.add(sFinancialKPI+'을 추가했습니다.');
+}
 //90. Sales By Division   Q:미국의 올해 매출 현황 알려줘
 function SalesByDivision(agent){
   let sDivision = agent.parameters.Division;
@@ -208,7 +205,14 @@ function SalesByDivision(agent){
   let sYear = sYearRaw.substr(0,4);
   agent.add(sDivision+'의 '+sYear+'년도 매출 현황입니다.');
 }
-
+//90.10 Sales By Division - AddProfit Q:영업 이익은 어때?
+function SalesByDivisionAddProfit(agent){
+  let sDivision = agent.parameters.Division;
+  let sYearRaw  = agent.parameters.Year.startDate;
+  let sYear = sYearRaw.substr(0,4);
+  let sFinancialKPI = agent.parameters.FinancialKPI;
+  agent.add(sFinancialKPI+'을 추가했습니다.');
+}
 //Google Assistant일 경우 Carousel로
   function googleAssistantOther(agent) {
     let conv = agent.conv(); // Get Actions on Google library conversation object
@@ -254,12 +258,12 @@ function SalesByDivision(agent){
   }
 
   function welcome(agent) {
-    agent.add(`Welcome to my agent!`);
+    agent.add(`안녕하세요. 블루맥스입니다.`);
   }
 
   function fallback(agent) {
-    agent.add(`I didn't understand`);
-    agent.add(`I'm sorry, can you try again?`);
+    // agent.add(`죄송합니다. 무슨 말씀인지 잘 모르겠습니다.`);
+    googleAssistantOther(agent);
   }
 
 
@@ -287,6 +291,8 @@ function SalesByDivision(agent){
   intentMap.set('Summarize finance', Summarizefinance);
   intentMap.set('Sales By Country', SalesByCountry);
   intentMap.set('Sales By Division', SalesByDivision);//Sales By Viewpoint - ChangeDate
+  intentMap.set('Sales By Country - AddProfit',SalesByCountryAddProfit);
+  intentMap.set('Sales By Division - AddProfit',SalesByDivisionAddProfit);
 
 
   // if requests for intents other than the default welcome and default fallback

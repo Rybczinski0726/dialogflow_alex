@@ -21,6 +21,7 @@ const SocketServer = require('ws').Server;
 const WebSocket = require('ws');
 const express = require('express');
 const webhook = require('./webhook');
+// const kakao = require('./plusfriend');
 const restServiceSales = require('./restServiceSales');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -32,6 +33,8 @@ app.use(cors());
 app.use(bodyParser.json());
 //10.Webhook용 서비스 생성
 app.use('/webhook', webhook);
+//카카오 플러스 친구
+// app.use('/kakao', kakao);
 app.use('/salesData', restServiceSales);
 //20.index.html호출용 서비스 생성
 app.use(express.static('static'))

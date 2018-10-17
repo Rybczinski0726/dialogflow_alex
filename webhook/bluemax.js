@@ -184,14 +184,6 @@ function CallRPA (agent){
   agent.add('연계된 RPA서버를 통해서 조회중입니다.');
 
 }
-//50.100    Call RPA - yes Q:그래
-function CallRPAyes (agent){
-
-}
-//50.100    Call RPA - no Q:아니
-function CallRPAno (agent){
-
-}
 //60. Help Q:현재 화면에 대해 설명해줘
 function Help(agent){
 
@@ -239,9 +231,10 @@ function SalesByDivisionAddProfit(agent){
 //100.SmallTalk-ExchangeRate Q:오늘 기준 100달러가 원화로 얼마야?
 function SmallTalkExchangeRate(agent){
   let sDate = agent.parameters.Date;
-  let sUnitCurrencyFrom = agent.parameters.Unit;
+  let sUnitCurrencyFrom = agent.parameters.UnitCurrencyFrom;
+  let iAmount = sUnitCurrencyFrom.amount;
   let sCurrencyTo = agent.parameters.CurrencyTo;
-  agent.add('금일 외환은행 고시 환율 기준으로 '+sUnitCurrencyFrom.amount*1000+'원입니다')
+  agent.add('금일 외환은행 고시 환율 기준으로 '+iAmount*1000+'원입니다')
 }
 //Google Assistant일 경우 Carousel로
   function googleAssistantOther(agent) {

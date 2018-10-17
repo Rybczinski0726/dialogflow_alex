@@ -27,8 +27,8 @@ const WebSocket = require('ws');
 const imageUrl = 'https://developers.google.com/actions/images/badges/XPM_BADGING_GoogleAssistant_VER.png';
 const imageUrl2 = 'https://lh3.googleusercontent.com/Nu3a6F80WfixUqf_ec_vgXy_c0-0r4VLJRXjVFF_X_CIilEu8B9fT35qyTEj_PEsKw';
 const linkUrl = 'https://assistant.google.com/';
-const salesByCountry = require('./data/SalesByCountry.json');
-const salesByDivision = require('./data/SalesByDivision.json');
+const salesByCountry = require('../data/SalesByCountry.json');
+const salesByDivision = require('../data/SalesByDivision.json');
 
 process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
 //init Express Router
@@ -110,6 +110,27 @@ function SalesByViewpointCompare(agent){
   let sTopResult = '';
   agent.add(sDateFrom+'대비 '+sDateTo+'의 데이터');
 }
+//10.110 Sales By Viewpoint - AddProfit Q:영업 이익은 어때?
+function SalesByViewpointAddProfit(agent){
+  let sViewpoint = agent.parameters.Viewpoint;
+  let sFinancialKPI = agent.parameters.FinancialKPI;
+  let sPeriod  = agent.parameters.Period.startDate;
+  let sDate = sPeriod.split('T')[0].split('-')[0]+sPeriod.split('T')[0].split('-')[1]+sPeriod.split('T')[0].split('-')[2];
+
+
+  agent.add(sFinancialKPI+'을 추가했습니다.');
+}
+function SalesByViewpointChangeViewpoint(agent){
+  // let sViewpoint = agent.parameters.Viewpoint;
+  // let sFinancialKPI = agent.parameters.FinancialKPI;
+  // let sPeriod  = agent.parameters.Period.startDate;
+  // let sDate = sPeriod.split('T')[0].split('-')[0]+sPeriod.split('T')[0].split('-')[1]+sPeriod.split('T')[0].split('-')[2];
+  //
+  //
+  // agent.add(sFinancialKPI+'을 추가했습니다.');
+    SalesByViewpoint(agent);
+}
+
 
 //20. 제품 조회 Query Product Q:리지드 OLED가 뭐야?
 function QueryProduct(agent){
@@ -160,6 +181,7 @@ function QueryLocalArea(agent){
 }
 //50.    Call RPA Q:참 이번에 A社랑 계약금이 입금됐는지 확인해줘
 function CallRPA (agent){
+  agent.add('연계된 RPA서버를 통해서 조회중입니다.');
 
 }
 //50.100    Call RPA - yes Q:그래
@@ -190,9 +212,9 @@ function SalesByCountry(agent){
 }
 //80.10 Sales By Country - AddProfit Q:영업 이익은 어때?
 function SalesByCountryAddProfit(agent){
-  let sCountry = agent.parameters.Country;
-  let sYearRaw  = agent.parameters.Year.startDate;
-  let sYear = sYearRaw.substr(0,4);
+  // let sCountry = agent.parameters.Country;
+  // let sYearRaw  = agent.parameters.Year.startDate;
+  // let sYear = sYearRaw.substr(0,4);
   let sFinancialKPI = agent.parameters.FinancialKPI;
   // console.log(sCountry);
   // console.log(sYear);
@@ -207,11 +229,19 @@ function SalesByDivision(agent){
 }
 //90.10 Sales By Division - AddProfit Q:영업 이익은 어때?
 function SalesByDivisionAddProfit(agent){
-  let sDivision = agent.parameters.Division;
-  let sYearRaw  = agent.parameters.Year.startDate;
-  let sYear = sYearRaw.substr(0,4);
+  // let sDivision = agent.parameters.Division;
+  // let sYearRaw  = agent.parameters.Year.startDate;
+  // let sYear = sYearRaw.substr(0,4);
   let sFinancialKPI = agent.parameters.FinancialKPI;
   agent.add(sFinancialKPI+'을 추가했습니다.');
+}
+
+//100.SmallTalk-ExchangeRate Q:오늘 기준 100달러가 원화로 얼마야?
+function SmallTalkExchangeRate(agent){
+  let sDate = agent.parameters.Date;
+  let sUnitCurrencyFrom = agent.parameters.Unit;
+  let sCurrencyTo = agent.parameters.CurrencyTo;
+  agent.add('금일 외환은행 고시 환율 기준으로 '+sUnitCurrencyFrom.amount*1000+'원입니다')
 }
 //Google Assistant일 경우 Carousel로
   function googleAssistantOther(agent) {
@@ -276,6 +306,8 @@ function SalesByDivisionAddProfit(agent){
   intentMap.set('Sales By Viewpoint', SalesByViewpoint);
   intentMap.set('Sales By Viewpoint - ChangeDate', SalesByViewpoint);
   intentMap.set('Sales By Viewpoint - Compare', SalesByViewpointCompare);
+  intentMap.set('Sales By Viewpoint - AddProfit', SalesByViewpointAddProfit);
+  intentMap.set('Sales By Viewpoint - ChangeViewpoint', SalesByViewpointChangeViewpoint);
   // intentMap.set('Sales By Viewpoint - AddDivision', SalesByViewpointAddDivision);
   // intentMap.set('Sales By Viewpoint - AddDivision - Drilldown', SalesByViewpointAddDivisionDrilldown);
   // intentMap.set('Sales By Viewpoint - smallTalk-ExchangeRate', SalesByViewpointsmallTalkExchangeRate);
@@ -293,6 +325,7 @@ function SalesByDivisionAddProfit(agent){
   intentMap.set('Sales By Division', SalesByDivision);//Sales By Viewpoint - ChangeDate
   intentMap.set('Sales By Country - AddProfit',SalesByCountryAddProfit);
   intentMap.set('Sales By Division - AddProfit',SalesByDivisionAddProfit);
+  intentMap.set('SmallTalk-ExchangeRate',SmallTalkExchangeRate);
 
 
   // if requests for intents other than the default welcome and default fallback

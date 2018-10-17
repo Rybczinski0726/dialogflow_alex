@@ -20,9 +20,9 @@
 const SocketServer = require('ws').Server;
 const WebSocket = require('ws');
 const express = require('express');
-const webhook = require('./webhook');
+const webhook = require('./webhook/bluemax');
 const kakao = require('./kakao/plusfriend');
-const restServiceSales = require('./restServiceSales');
+const restServiceSales = require('./rest/restServiceSales');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 

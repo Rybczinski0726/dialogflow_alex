@@ -1,8 +1,8 @@
 'use strict';
 const express = require('express');
-const salesData = require('./data/SalesData.json');
-const salesByCountry = require('./data/SalesByCountry.json');
-const salesByDivision = require('./data/SalesByDivision.json');
+const salesData = require('../data/SalesData.json');
+const salesByCountry = require('../data/SalesByCountry.json');
+const salesByDivision = require('../data/SalesByDivision.json');
 var router = express.Router();
 //GET
 router.get('/:division?/:country?/:period?',function(request, response) {

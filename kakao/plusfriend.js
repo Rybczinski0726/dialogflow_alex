@@ -32,8 +32,8 @@ router.post('/message',function(request,response){
   console.log(options);
   var request = chatapp.textRequest(sContent, options);
   //test
-  oResponse.message.text=sContent;
-     
+  // oResponse.message.text=sContent;
+
     request.on('response', function(res) {
      // console.log(res);
      oResponse.message.text=res.result.fulfillment.speech;

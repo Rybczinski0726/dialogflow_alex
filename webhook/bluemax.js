@@ -110,7 +110,7 @@ function SalesByViewpointCompare(agent){
   let aFilteredData = [];
   let aTopResult = [];
   let sTopResult = '';
-  agent.add(sDateFrom+'대비 '+sDateTo+'의 데이터');
+  agent.add(sDateFrom.substr(0,4)+'년 '+sDateFrom.substr(4,2)+'월 대비 '+sDateTo.substr(0,4)+'년 '+sDateTo.substr(4,2)+'월은 전반적으로 매출액의 감소가 예상됩니다. ');
 }
 //10.110 Sales By Viewpoint - AddProfit Q:영업 이익은 어때?
 function SalesByViewpointAddProfit(agent){
@@ -137,9 +137,10 @@ function SalesByViewpointChangeViewpoint(agent){
 //20. 제품 조회 Query Product Q:리지드 OLED가 뭐야?
 function QueryProduct(agent){
   let sProduct = agent.parameters.Product;
-  agent.add(sProduct+`에 대한 정보입니다`);
+
   switch (sProduct) {
     case `리지드`:
+        agent.add('위키피디아에 의하면 '+sProduct+`는 자체발광으로 최고의 화질을 구현하는 디스플레이 OLED. OLED는 뛰어난 화질과 얇은 두께를 갖는 특징이 있습니다. `);
         agent.add(new Card({
             title: `제품 상세 정보`,
             imageUrl: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB9aBdgJwyYikgxaLQwjT6BrhUvyFZUbsFl8beN4TCtril9Wcn`,
@@ -149,8 +150,10 @@ function QueryProduct(agent){
           })
         );
         agent.add(new Suggestion(`플렉서블 OLED는 뭐야`));
+
         break;
         case `플렉서블 OLED`:
+        agent.add('위키피디아에 의하면 '+sProduct+`는 부드럽게 휘어지고 자유롭게 구부릴 수 있는 형태의 디스플레이를 말합니다. `);
         agent.add(new Card({
             title: `제품 상세 정보`,
             imageUrl: `http://www.ddaily.co.kr/data/photos/cdn/20171041/art_1507683592.jpg`,
@@ -183,7 +186,7 @@ function QueryLocalArea(agent){
 }
 //50.    Call RPA Q:참 이번에 A社랑 계약금이 입금됐는지 확인해줘
 function CallRPA (agent){
-  agent.add('연계된 RPA서버를 통해서 조회중입니다.');
+  agent.add('연계된 RPA서버를 통해서 조회중입니다. 잠시만 기다려주세요.');
 
 }
 //60. Help Q:현재 화면에 대해 설명해줘
@@ -202,7 +205,7 @@ function SalesByCountry(agent){
   let sYear = sYearRaw.substr(0,4);
   // console.log(sCountry);
   // console.log(sYear);
-  agent.add(sCountry+'의 '+sYear+'년도 매출 현황입니다.');
+  agent.add(sCountry+'의 '+sYear+'년도 매출 현황입니다. 매월 평균 4% 가량의 성장률을 보이고 있습니다.');
 }
 //80.10 Sales By Country - AddProfit Q:영업 이익은 어때?
 function SalesByCountryAddProfit(agent){
@@ -212,7 +215,7 @@ function SalesByCountryAddProfit(agent){
   let sFinancialKPI = agent.parameters.FinancialKPI;
   // console.log(sCountry);
   // console.log(sYear);
-  agent.add(sFinancialKPI+'을 추가했습니다.');
+  agent.add(sFinancialKPI+'을 추가했습니다. 영업 이익은 매출액에 비해 증가폭은 낮으나 증가세는 계속되고 있습니다.');
 }
 //80.20 Sales By Country - ChangeCountry Q:미국은 어때?
 function SalesByCountryChangeCountry(agent){
@@ -231,7 +234,7 @@ function SalesByDivision(agent){
   let sDivision = agent.parameters.Division;
   let sYearRaw  = agent.parameters.Year.startDate;
   let sYear = sYearRaw.substr(0,4);
-  agent.add(sDivision+'의 '+sYear+'년도 매출 현황입니다.');
+  agent.add(sDivision+'의 '+sYear+'년도 매출 현황입니다. 매월 평균 6% 가량의 성장률을 보이고 있습니다.');
 }
 //90.10 Sales By Division - AddProfit Q:영업 이익은 어때?
 function SalesByDivisionAddProfit(agent){
@@ -239,7 +242,7 @@ function SalesByDivisionAddProfit(agent){
   // let sYearRaw  = agent.parameters.Year.startDate;
   // let sYear = sYearRaw.substr(0,4);
   let sFinancialKPI = agent.parameters.FinancialKPI;
-  agent.add(sFinancialKPI+'을 추가했습니다.');
+  agent.add(sFinancialKPI+'을 추가했습니다. 영업 이익 역시 꾸준한 증가세를 보입니다');
 }
 //80.20 Sales By Division - ChangeDivision Q:IM은 어때?
 function SalesByDivisionChangeDivision(agent){
@@ -401,6 +404,7 @@ function SmallTalkExchangeRate(agent){
   intentMap.set('Sales By Division - ChangeDivision',SalesByDivisionChangeDivision);
   intentMap.set('Sales By Division - SendEmail',SalesByDivisionSendEmail);
   intentMap.set('SmallTalk-ExchangeRate',SmallTalkExchangeRate);
+  intentMap.set('Call RPA',CallRPA);
 
 
   // if requests for intents other than the default welcome and default fallback

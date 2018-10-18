@@ -18,6 +18,8 @@
 
 //const functions = require('firebase-functions');
 const express = require('express');
+var restRequest = require('request');
+const json2html = require('node-json2html');
 // const bodyParser = require('body-parser');
 const { WebhookClient } = require('dialogflow-fulfillment');
 const { Card, Suggestion } = require('dialogflow-fulfillment');
@@ -212,6 +214,18 @@ function SalesByCountryAddProfit(agent){
   // console.log(sYear);
   agent.add(sFinancialKPI+'을 추가했습니다.');
 }
+//80.20 Sales By Country - ChangeCountry Q:미국은 어때?
+function SalesByCountryChangeCountry(agent){
+  SalesByCountry(agent);
+  // let sCountry = agent.parameters.Country;
+  // let sYearRaw  = agent.parameters.Year.startDate;
+  // let sYear = sYearRaw.substr(0,4);
+  // // let sFinancialKPI = agent.parameters.FinancialKPI;
+  // // console.log(sCountry);
+  // // console.log(sYear);
+  // agent.add(sFinancialKPI+'을 추가했습니다.');
+}
+
 //90. Sales By Division   Q:미국의 올해 매출 현황 알려줘
 function SalesByDivision(agent){
   let sDivision = agent.parameters.Division;
@@ -227,6 +241,74 @@ function SalesByDivisionAddProfit(agent){
   let sFinancialKPI = agent.parameters.FinancialKPI;
   agent.add(sFinancialKPI+'을 추가했습니다.');
 }
+//80.20 Sales By Division - ChangeDivision Q:IM은 어때?
+function SalesByDivisionChangeDivision(agent){
+  SalesByDivision(agent);
+}
+//80.30 Sales By Division - SendEmail Q:나에게 이메일로 보내줘
+function SalesByDivisionSendEmail(agent){
+  sendMail('title','본문');
+//   let sDivision = agent.parameters.Division;
+//   let sYearRaw  = agent.parameters.Year.startDate;
+//   let sYear = sYearRaw.substr(0,4);
+//
+//   let sSubject = '[IntelligentNextERP] '+ sDivision+'의 '+sYear+'년도 매출 현황 자료';;
+//   let sBody = '본문';
+//
+//   //20.본문 구성
+//   //파라미터 조건으로 데이터 가져와
+//   let fnConverJsonToHTML = function(aJson){
+//     let sHeader = '<div class="container"><p><table cellspacing="2" cellpadding="0" border="0" align="center" bgcolor="#999999"><thead><tr>' +
+//                  '<th>Month</th>'+'<th>Division</th>'+'<th>Sales</th>'+'<th>Profit</th>'+'<th>SalesGap</th>'+'<th>ProfitGap</th>'+'</tr></thead>'; //
+//     let sBodyTemplate = {
+//                                     tag: 'tr',
+//                                     bgcolor :"#ffffff",
+//                                     children: [{
+//                                         "tag": "td",
+//                                         "html": "${Date}"
+//                                       },
+//                                       {
+//                                         "tag": "td",
+//                                         "html": "${Division}"
+//                                       },
+//                                       {
+//                                         "tag": "td",
+//                                         "html": "${Sales}"
+//                                       },
+//                                       {
+//                                         "tag": "td",
+//                                         "html": "${Profit}"
+//                                       },
+//                                       {
+//                                         "tag": "td",
+//                                         "html": "${SalesGap}"
+//                                       },
+//                                       {
+//                                         "tag": "td",
+//                                         "html": "${ProfitGap}"
+//                                       }]};
+//      let sBody = json2html.transform(aJson,sBodyTemplate);
+//      return sHeader+sBody+'<tbody></tbody>        </table></div>';
+//
+//
+//   }
+//   restRequest.post('/salesData/Division',{Division:sDivision},
+//    function(err,resp,body){
+//      if(err){
+//        console.log(err)
+//     } else {
+//       console.log(body);
+//       //body를 html로 변경
+//       var sBody = fnConverJsonToHTML(body);
+//      //보내기
+//      sendMail(sSubject, sBody);
+//
+//      }
+//
+//    }
+// )
+}
+
 
 //100.SmallTalk-ExchangeRate Q:오늘 기준 100달러가 원화로 얼마야?
 function SmallTalkExchangeRate(agent){
@@ -309,15 +391,15 @@ function SmallTalkExchangeRate(agent){
   // intentMap.set('Sales By Viewpoint - Profit', SalesByViewpointProfit);
   intentMap.set('Query Employee', QueryEmployee);
   intentMap.set('Query Local Area', QueryLocalArea);
-  intentMap.set('Call RPA', CallRPA);
-  intentMap.set('Call RPA - yes', CallRPAyes);
-  intentMap.set('Call RPA - no', CallRPAno);
   intentMap.set('Help', Help);
   intentMap.set('Summarize finance', Summarizefinance);
   intentMap.set('Sales By Country', SalesByCountry);
-  intentMap.set('Sales By Division', SalesByDivision);//Sales By Viewpoint - ChangeDate
   intentMap.set('Sales By Country - AddProfit',SalesByCountryAddProfit);
+  intentMap.set('Sales By Country - ChangeCountry',SalesByCountryChangeCountry);
+  intentMap.set('Sales By Division', SalesByDivision);//Sales By Viewpoint - ChangeDate
   intentMap.set('Sales By Division - AddProfit',SalesByDivisionAddProfit);
+  intentMap.set('Sales By Division - ChangeDivision',SalesByDivisionChangeDivision);
+  intentMap.set('Sales By Division - SendEmail',SalesByDivisionSendEmail);
   intentMap.set('SmallTalk-ExchangeRate',SmallTalkExchangeRate);
 
 
@@ -359,5 +441,42 @@ function ArrayToStringProp(aData,sProp,sSep){
 
   return sResult;
 }
+//SCP APIM을 이용한 메일 전송
+function sendMail(sSubject, sBody){
+  const cAPIURL = 'https://s0003918939trial-trial.apim1.hanatrial.ondemand.com:443/s0003918939trial/elements/api-v2/messages';
+  let mailTemplate =  {
+  "Subject": sSubject,//"<<여기에 제목>>",
+  "Body": {
+    "Content": sBody,//"<<여기에 html형식으로 본문>>",
+    "ContentType": "html"
+  },
+  "ToRecipients": [
+    {
+      "EmailAddress": {
+        "Address": "s.chul.yang@samsung.com",
+        "Name": "양승철"
+      }
+    }
+  ],
+ "CcRecipients": [
+    {
+      "EmailAddress": {
+        "Address": "skyskai@gmail.com",
+        "Name": "양승철"
+      }
+    }
+  ]
+};
+//rest 호출
+restRequest.post(cAPIURL, mailTemplate,function(error,resp,body){
+  if (!error && resp.statusCode == 200) {
+            console.log("SUCC"+body)
+            agent.add("ERROR");
+        } else {
+          console.log("ERR"+resp);
+          agent.add("Success");
+        }
+});
 
+}
 module.exports = webhook;

@@ -19,6 +19,8 @@
     "path": "^0.12.7",
     "ws": "^2.2.1",
     "cors": "latest",
-    "apiai": "latest"
+    "apiai": "latest",
+    "request": "latest",
+    "node-json2html": "latest"
   }
 }
